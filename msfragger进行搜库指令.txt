@@ -1,0 +1,33 @@
+# workspace initialization
+..\philosopher workspace --init
+
+# download databse
+#这一步命令成功执行后，通常会生成一个FASTA格式的数据库文件，文件名会包含日期和信息，例如：2025-01-11-decoys-reviewed-contam-UP000005640.fas。
+..\philosopher database --id UP000005640 --reviewed --contam
+#是用于蛋白质组学数据分析的一个关键步骤，其核心作用是自动下载并准备一个高质量的蛋白质序列数据库（FASTA文件），该数据库将作为“参考字典”用于后续的质谱数据鉴定
+
+# # msfragger
+F:\FragPipe\test>copy closed_fragger.params, nonspecific_fragger.params, open_fragger.params from "G:\manus5\iPRG2016"
+作用：从MSFragger的安装目录复制三个预设的参数文件到当前工作目录。
+用上面的指令会出现‘’系统找不到指定的文件“的错误，因为Windows 的 copy命令不支持 copy 文件1, 文件2 from 源路径这种格式。需要使用标准的 copy 源路径\文件名 目标路径格式。所以应该这样做：
+copy "G:\manus5\iPRG2016\closed_fragger.params" .
+copy "G:\manus5\iPRG2016\nonspecific_fragger.params" .
+copy "G:\manus5\iPRG2016\open_fragger.params" .
+
+修改open_fragger.params和closed_fragger.params的database_name 为F:\FragPipe\test\2026-01-11-decoys-reviewed-contam-UP000005640.fas
+
+
+java -jar F:\FragPipe\FragPipe-24.0\tools\MSFragger-4.4\MSFragger-4.4.jar --config
+作用：此命令用于测试MSFragger是否正确安装以及Java环境是否正常。加上 --config参数后，程序不会执行实际的搜库分析，而是打印出版本信息、可用的内存等系统配置，然后退出。这是一个很好的预检查步骤。
+
+
+#执行搜库分析
+java -Xmx8g  -jar F:\FragPipe\FragPipe-24.0\tools\MSFragger-4.4\MSFragger-4.4.jar open_fragger.params mixtureABrep1.mzML
+作用：这是正式启动搜库分析的命令。MSFragger将读取参数文件和数据库，然后将质谱数据文件（.mzML）中的每一张图谱与数据库中的理论序列进行匹配，最终生成包含鉴定结果的文件（如 .pepXML）。
+语法细节：
+-Xmx8g：这是Java虚拟机参数，非常重要。它指定了Java程序可以使用的最大内存为8GB（Gigabytes）。确保分配的内存足够大以处理您的数据，如果数据量很大，可能需要增加到16g或更高。
+open_fragger.params：指定要使用的参数文件。这里使用的是“开放”（半特异性）酶切的参数。
+mixtureABrep1.mzML：是输入的质谱数据文件，通常是原始数据转换后的标准格式。
+
+
+comet和msfragger是二选一就行。
