@@ -1,0 +1,13 @@
+先配置好环境变量
+cd /d \G:
+cd G:\组学数据\LFQ_SynaptG2Si_HDDDA_Yeast_01.raw
+然后执行
+
+msconvert ".\LFQ_SynaptG2Si_HDDDA_Yeast_01.raw" --mzML --zlib --64 --filter "peakPicking cwt snr=5.0 peakSpace=0.1 msLevel=1-"
+--mzML: 输出格式。
+
+--zlib: 启用压缩。
+
+--64: 使用 64-bit 精度。
+
+--filter "peakPicking true 1-": 关键参数，启用厂商算法对 MS1 和 MS2 进行质心化处理。
